@@ -6,31 +6,58 @@ A full-stack College Event Management System built as a mini project for Web App
 
 ## 🚀 Features
 
-### 👩‍🎓 Student
+### 👨‍🎓 Student Features
 
-* Browse all events
-* View event details
+* Browse upcoming events
+* View detailed event information
 * Register / Unregister for events
-* View registered events
+* View personal registrations
 
-### 👨‍💼 Admin
+### 👨‍💼 Admin Features
 
 * Add new events (Create)
 * View all events (Read)
 * Edit event details (Update)
 * Delete events (Delete)
-* View number of registrations
+* View number of registrations per event
+
+---
+
+## 🔄 CRUD Operations
+
+This application fully implements CRUD:
+
+* **Create** → Admin adds new events
+* **Read** → Users view event listings and details
+* **Update** → Admin edits event details/status
+* **Delete** → Admin removes events
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React (Vite + TypeScript)
+* Tailwind CSS
+* shadcn/ui components
+
+### Backend & Database
+
+* Supabase (PostgreSQL)
+* Supabase Auth (Authentication)
+* Supabase Storage (Image uploads)
 
 ---
 
 ## 🔐 Authentication & Roles
 
-* User authentication implemented using Supabase Auth
-* Each user has a role stored in a `profiles` table:
+* Users can sign up and log in using email/password
+* Role-based access:
 
-  * `student` (default)
-  * `admin` (manually assigned)
-* Role-based access control ensures only admins can manage events
+  * **Student** → View & register for events
+  * **Admin** → Full event management access
+* Roles are managed using a `profiles` table in Supabase
 
 ---
 
@@ -38,23 +65,21 @@ A full-stack College Event Management System built as a mini project for Web App
 
 ### Tables:
 
-* **events**
-* **registrations**
-* **profiles**
+### `events`
+- id, title, date, time, venue
+- category, description
+- poster_url, status, created_at
 
+### `registrations`
+- id, event_id, user_id, registered_at
+
+### `profiles`
+- id, role (student/admin)
+  
 Relationships:
 
 * One user can register for many events
 * Each registration links a user and an event
-
----
-
-## 🛠️ Tech Stack
-
-* **Frontend:** React + Vite + TypeScript
-* **Styling:** Tailwind CSS + shadcn/ui
-* **Backend & Database:** Supabase (PostgreSQL, Auth, Storage)
-* **Deployment:** Vercel
 
 ---
 
@@ -96,7 +121,7 @@ http://localhost:5173
 
 ## 🌐 Live Demo
 
-> (Add your Vercel link here after deployment)
+> [(Campus Connect)](https://campus-connect-v5hd.vercel.app/)]
 
 ---
 
@@ -113,6 +138,21 @@ http://localhost:5173
 
 ---
 
+## 🧠 Learning Outcomes
+
+* Built a full-stack web application
+* Implemented CRUD operations with a database
+* Integrated authentication and role-based access
+* Worked with real-world deployment tools
+
+---
+
+## 📌 Future Improvements
+
+* Dark mode support
+* Email notifications for event registration
+* Export registrations to CSV
+* Advanced filtering & search
 ## 📌 Key Concepts Demonstrated
 
 * CRUD Operations
@@ -123,14 +163,20 @@ http://localhost:5173
 
 ---
 
-## 👩‍💻 Author
+## 🌍 Deployment
 
-**Khadeejah Shaikh**
-Third Year IT Student
+The application is deployed using Vercel.
 
 ---
 
-## 📜 License
+## 👩‍💻 Author
+
+**Khadeejah Shaikh** & **Sharyu Kasbe**
+Third Year IT Students
+
+---
+
+## 📄 License
 
 This project is for educational purposes.
 
