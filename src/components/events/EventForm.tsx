@@ -87,14 +87,14 @@ export default function EventForm({ initialData, onSubmit, onCancel, submitting 
     }
 
     setUploadingImage(true);
-    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+    const fileName = `posters/${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
 
     const localPreview = URL.createObjectURL(file);
     setImagePreview(localPreview);
 
     const { data, error } = await supabase.storage
       .from('event-posters')
-      .upload(fileName, file, { upsert: true });
+      .upload(fileName, file);
 
     if (error) {
       setErrors((e) => ({ ...e, poster_url: 'Upload failed: ' + error.message }));
