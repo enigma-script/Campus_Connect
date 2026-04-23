@@ -23,53 +23,76 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔥 FIXED: always get fresh profile
   const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .maybeSingle();
+      .single(); // changed from maybeSingle → stricter
 
     if (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Profile fetch error:', error);
       return null;
     }
-    return data as Profile | null;
+
+    return data as Profile;
   };
 
   const refreshProfile = async () => {
-    if (user) {
-      const p = await fetchProfile(user.id);
-      setProfile(p);
-    }
+    if (!user) return;
+    const p = await fetchProfile(user.id);
+    setProfile(p);
   };
 
+  // 🔥 MAIN AUTH LISTENER FIXED
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const init = async () => {
+      setLoading(true);
+
+      const { data: { session } } = await supabase.auth.getSession();
+
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id).then(setProfile).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      (async () => {
+      if (session?.user) {
+        const p = await fetchProfile(session.user.id);
+        setProfile(p);
+      } else {
+        setProfile(null);
+      }
+
+      setLoading(false);
+    };
+
+    init();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+
         if (session?.user) {
           const p = await fetchProfile(session.user.id);
-          setProfile(p);
+
+          // 🔥 fallback logic added
+          const roleFallback =
+            p?.role ||
+            session.user.user_metadata?.role ||
+            session.user.app_metadata?.role ||
+            'student';
+
+          setProfile({
+            ...p,
+            role: roleFallback,
+          } as Profile);
         } else {
           setProfile(null);
         }
-        if (event === 'INITIAL_SESSION') {
-          setLoading(false);
-        }
-      })();
-    });
+
+        setLoading(false);
+      }
+    );
 
     return () => subscription.unsubscribe();
   }, []);
