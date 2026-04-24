@@ -13,6 +13,9 @@ import {
 } from '../ui/select';
 import { supabase } from '../../lib/supabase';
 import type { Event, EventCategory, EventStatus } from '../../lib/database.types';
+import { useEffect, useState } from "react";   // add useEffect + useState
+import { supabase } from "../../lib/supabase"; // you already have this
+
 
 interface EventFormData {
   title: string;
@@ -115,10 +118,15 @@ export default function EventForm({ initialData, onSubmit, onCancel, submitting 
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    await onSubmit(form);
+  e.preventDefault();
+  if (!validate()) return;
+  if (role !== "admin") {
+    alert("🚫 Only admins can create events");
+    return;
+  }
+  await onSubmit(form);
   };
+
 
   const set = (key: keyof EventFormData) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -126,6 +134,18 @@ export default function EventForm({ initialData, onSubmit, onCancel, submitting 
     setForm((f) => ({ ...f, [key]: e.target.value }));
     if (errors[key]) setErrors((err) => { const n = { ...err }; delete n[key]; return n; });
   };
+  
+
+  const [role, setRole] = useState<string | null>(null);
+useEffect(() => {
+  async function checkRole() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setRole(user.app_metadata.role || user.user_metadata.role || "student");
+    }
+  }
+  checkRole();
+}, []);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
