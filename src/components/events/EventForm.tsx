@@ -146,6 +146,20 @@ useEffect(() => {
   checkRole();
 }, []);
 
+useEffect(() => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (session) {
+      setRole(session.user.app_metadata.role || "student"); // 👈 this uses setRole
+      console.log("Session updated:", session.user.app_metadata.role);
+    }
+  });
+
+  // ✅ Correct cleanup
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Title */}
