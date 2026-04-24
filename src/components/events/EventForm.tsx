@@ -13,8 +13,7 @@ import {
 } from '../ui/select';
 import { supabase } from '../../lib/supabase';
 import type { Event, EventCategory, EventStatus } from '../../lib/database.types';
-import { useEffect, useState } from "react";   // add useEffect + useState
-import { supabase } from "../../lib/supabase"; // you already have this
+import { useEffect} from "react";   // add useEffect + useState
 
 
 interface EventFormData {
@@ -141,7 +140,7 @@ useEffect(() => {
   async function checkRole() {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      setRole(user.app_metadata.role || user.user_metadata.role || "student");
+      console.log("App metadata role:", user.app_metadata.role);
     }
   }
   checkRole();
