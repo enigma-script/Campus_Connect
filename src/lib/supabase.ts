@@ -5,7 +5,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: true,
-    autoRefreshToken: true,
+    persistSession: true,       // ✅ ensures JWT is stored in local storage
+    autoRefreshToken: true,     // ✅ refreshes token automatically
+    detectSessionInUrl: true,   // ✅ important for login redirects
   },
 });
